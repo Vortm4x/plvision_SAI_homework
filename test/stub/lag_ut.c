@@ -172,23 +172,69 @@ int main()
         };
 
         status = lag_api->get_lag_attribute(lag_oid[i], 1, &lag_port_list_attr[i]);
+        if (status != SAI_STATUS_SUCCESS) {
+            fprintf(stderr, "Failed to get port list from LAG obj %#016x, code %#08x\n", lag_oid[i], status);
+            return EXIT_FAILURE;   
+        }
     }
 
+    // Show LAG port lists
+    for (int i = 0; i < TEST_LAG_COUNT; i++) {
+        fprintf(stderr, "LAG OID %#016lx port list:\n", lag_oid[i]);
+        sai_object_list_t ports = lag_port_list_attr[i].value.objlist; 
+
+        for (uint32_t j = 0; j < ports.count; j++) {
+            fprintf(stderr, "\tPort OID %#016lx\n", ports.list[j]);
+        }
+    }
 
     // Get LAG memeber #1 LAG_ID
     sai_attribute_t lag_id = {
         .id = SAI_LAG_MEMBER_ATTR_LAG_ID,
         .value = {}
     };
-    lag_api->get_lag_member_attribute(lag_member_oid[0], 1, &lag_id);
+    status = lag_api->get_lag_member_attribute(lag_member_oid[0], 1, &lag_id);
+    if (status != SAI_STATUS_SUCCESS) {
+        fprintf(stderr, "Failed to get LAG OID from LAG member obj %#016x, code %#08x\n", lag_member_oid[0], status);
+        return EXIT_FAILURE;   
+    }
+
+    fprintf(stderr, "LAG member [OID %#016lx]: LAG OID %#016lx\n",
+        lag_member_oid[0],
+        lag_id.value.oid
+    );
+
+    if (lag_id.value.oid != lag_oid[0]) {
+        fprintf(stderr, "LAG OIDs doesn't match: got %#016lx, expected %#016lx\n",
+            lag_id.value.oid,
+            lag_oid[0]
+        );
+        return EXIT_FAILURE;
+    }
 
     // Get LAG memeber #3 PORT_ID
     sai_attribute_t port_id = { 
         .id = SAI_LAG_MEMBER_ATTR_PORT_ID,
         .value = {}
     };
-    lag_api->get_lag_member_attribute(lag_member_oid[2], 1, &port_id);
+    status = lag_api->get_lag_member_attribute(lag_member_oid[2], 1, &port_id);
+    if (status != SAI_STATUS_SUCCESS) {
+        fprintf(stderr, "Failed to get Port OID from LAG member obj %#016x, code %#08x\n", lag_member_oid[2], status);
+        return EXIT_FAILURE;   
+    }
 
+    fprintf(stderr, "LAG member [OID %#016lx]: Port OID %#016lx\n",
+        lag_member_oid[2],
+        port_id.value.oid
+    );
+
+    if (port_id.value.oid != switch_port_list_oid[2]) {
+        fprintf(stderr, "Port OIDs doesn't match: got %#016lx, expected %#016lx\n",
+            port_id.value.oid,
+            switch_port_list_oid[2]
+        );
+        return EXIT_FAILURE;
+    }
 
     // Remove LAG memeber #2
     status = lag_api->remove_lag_member(lag_member_oid[1]);
@@ -216,7 +262,21 @@ int main()
             }
         };
 
-        lag_api->get_lag_attribute(lag_oid[i], 1, &lag_port_list_attr[i]);
+        status = lag_api->get_lag_attribute(lag_oid[i], 1, &lag_port_list_attr[i]);
+        if (status != SAI_STATUS_SUCCESS) {
+            fprintf(stderr, "Failed to get port list from LAG obj %#016x, code %#08x\n", lag_oid[i], status);
+            return EXIT_FAILURE;   
+        }
+    }
+
+    // Show LAG port lists
+    for (int i = 0; i < TEST_LAG_COUNT; i++) {
+        printf("LAG OID %#016lx port list:\n", lag_oid[i]);
+        sai_object_list_t ports = lag_port_list_attr[i].value.objlist; 
+
+        for (uint32_t j = 0; j < ports.count; j++) {
+            printf("\tPort OID %#016lx\n", ports.list[j]);
+        }
     }
 
     // Remove LAG memeber #1
