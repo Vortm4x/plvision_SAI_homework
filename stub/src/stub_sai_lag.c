@@ -248,12 +248,12 @@ sai_status_t stub_create_lag(
     }
 
     status = stub_create_object(SAI_OBJECT_TYPE_LAG, lag_db_id, lag_id);
-
     if (status != SAI_STATUS_SUCCESS) {
         fprintf(stderr, "Cannot create a LAG OID\n");
         return status;
     }
 
+    fprintf(stderr, "Create LAG [OID %#016lx]\n", *lag_id);
     lag_db_set_lag_used(lag_db_id, true);
     lag_db.lags[lag_db_id].ports_mask = 0;
     lag_db.lags[lag_db_id].group_size = 0;
@@ -278,6 +278,7 @@ sai_status_t stub_remove_lag(
         return SAI_STATUS_FAILURE;
     }
 
+    fprintf(stderr, "Remove LAG [OID %#016lx]\n", lag_id);
     lag_db_set_lag_used(lag_db_id, false);
     lag_db.lags[lag_db_id].ports_mask = 0;
     lag_db.lags[lag_db_id].group_size = 0;
@@ -329,7 +330,8 @@ sai_status_t stub_create_lag_member(
     sai_status_t status;
     uint32_t lag_member_db_id;
     uint32_t lag_db_id;
-    const sai_attribute_value_t *attr_val;
+    const sai_attribute_value_t *lag_attr;
+    const sai_attribute_value_t *port_attr;
     uint32_t attr_idx;
     char list_str[MAX_LIST_VALUE_STR_LEN];                                                       
 
@@ -358,35 +360,19 @@ sai_status_t stub_create_lag_member(
         return SAI_STATUS_FAILURE;
     }
 
-    status = stub_create_object(SAI_OBJECT_TYPE_LAG_MEMBER, lag_member_db_id, lag_member_id);
-
-    if (status != SAI_STATUS_SUCCESS) {
-        fprintf(stderr, "Cannot create a LAG member OID\n");
-        return status;
-    }
-
-    sai_attr_list_to_str(attr_count, attr_list, lag_member_attribs, MAX_LIST_VALUE_STR_LEN, list_str);
-    fprintf(stderr, "Create LAG member [OID %#016lx] (attrs: %s)\n", *lag_member_id, list_str);
-
-    lag_db_set_lag_member_used(lag_member_db_id, true);
-    lag_db.members[lag_member_db_id].port_oid = SAI_NULL_OBJECT_ID;
-    lag_db.members[lag_member_db_id].lag_oid = SAI_NULL_OBJECT_ID;
-
-    status = find_attrib_in_list(attr_count, attr_list, SAI_LAG_MEMBER_ATTR_PORT_ID, &attr_val, &attr_idx);
+    status = find_attrib_in_list(attr_count, attr_list, SAI_LAG_MEMBER_ATTR_PORT_ID, &port_attr, &attr_idx);
     if (status != SAI_STATUS_SUCCESS) {
         fprintf(stderr, "LAG_ID attribute not found\n");
         return status;
     }
-    lag_db.members[lag_member_db_id].port_oid = attr_val->oid;
 
-    status = find_attrib_in_list(attr_count, attr_list, SAI_LAG_MEMBER_ATTR_LAG_ID, &attr_val, &attr_idx);
+    status = find_attrib_in_list(attr_count, attr_list, SAI_LAG_MEMBER_ATTR_LAG_ID, &lag_attr, &attr_idx);
     if (status != SAI_STATUS_SUCCESS) {
         fprintf(stderr, "PORT_ID attribute not found\n");
         return status;
     }
-    lag_db.members[lag_member_db_id].lag_oid = attr_val->oid;
 
-    status = stub_object_to_type(attr_val->oid, SAI_OBJECT_TYPE_LAG, &lag_db_id);
+    status = stub_object_to_type(lag_attr->oid, SAI_OBJECT_TYPE_LAG, &lag_db_id);
     if (status != SAI_STATUS_SUCCESS) {
         fprintf(stderr, "Cannot get LAG DB ID\n");
         return status;
@@ -397,7 +383,19 @@ sai_status_t stub_create_lag_member(
         return SAI_STATUS_FAILURE;
     }
 
+    status = stub_create_object(SAI_OBJECT_TYPE_LAG_MEMBER, lag_member_db_id, lag_member_id);
+    if (status != SAI_STATUS_SUCCESS) {
+        fprintf(stderr, "Cannot create a LAG member OID\n");
+        return status;
+    }
+
+    sai_attr_list_to_str(attr_count, attr_list, lag_member_attribs, MAX_LIST_VALUE_STR_LEN, list_str);
+    fprintf(stderr, "Create LAG member [OID %#016lx] (attrs: %s)\n", *lag_member_id, list_str);
+
     lag_db_set_lag_port_used(lag_db_id, lag_member_db_id, true);
+    lag_db_set_lag_member_used(lag_member_db_id, true);
+    lag_db.members[lag_member_db_id].port_oid = port_attr->oid;
+    lag_db.members[lag_member_db_id].lag_oid = lag_attr->oid;
 
     return status;
 }
@@ -428,7 +426,6 @@ sai_status_t stub_remove_lag_member(
         fprintf(stderr, "Cannot get LAG DB ID\n");
         return status;
     }
-
     lag_db_set_lag_port_used(lag_db_id, lag_member_db_id, false);
 
     return SAI_STATUS_SUCCESS;

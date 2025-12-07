@@ -141,9 +141,87 @@ static __attribute__((__used__)) const char *sai_type2str_arr[] = {
     "Sample packet type",
 
     /* SAI_OBJECT_TYPE_STP_INSTANCE = 13 */
-    "Stp instance type"
+    "Stp instance type",
 
-    /* SAI_OBJECT_TYPE_MAX = 14 */
+    /* SAI_OBJECT_TYPE_TRAP_GROUP = 14 */
+    "Trap group type",
+
+    /* SAI_OBJECT_TYPE_ACL_TABLE_GROUP = 15 */
+    "ACL table group type",
+
+    /* SAI_OBJECT_TYPE_POLICER = 16 */
+    "Policer type",
+
+    /* SAI_OBJECT_TYPE_WRED = 17 */
+    "WRED type",
+
+    /* SAI_OBJECT_TYPE_QOS_MAPS = 18 */
+    "QoS maps type",
+
+    /* SAI_OBJECT_TYPE_QUEUE = 19 */
+    "Queue type",
+
+    /* SAI_OBJECT_TYPE_SCHEDULER = 20 */
+    "Scheduler type",
+
+    /* SAI_OBJECT_TYPE_SCHEDULER_GROUP = 21 */
+    "Scheduler group type",
+
+    /* SAI_OBJECT_TYPE_BUFFER_POOL = 22 */
+    "Buffer pool type",
+
+    /* SAI_OBJECT_TYPE_BUFFER_PROFILE = 23 */
+    "Buffer profile type",
+
+    /* SAI_OBJECT_TYPE_PRIORITY_GROUP = 24 */
+    "Priority group type",
+
+    /* SAI_OBJECT_TYPE_LAG_MEMBER = 25 */
+    "LAG member type",
+
+    /* SAI_OBJECT_TYPE_HASH = 26 */
+    "Hash type",
+
+    /* SAI_OBJECT_TYPE_UDF = 27 */
+    "UDF type",
+
+    /* SAI_OBJECT_TYPE_UDF_MATCH = 28 */
+    "UDF match type",
+
+    /* SAI_OBJECT_TYPE_UDF_GROUP = 29 */
+    "UDF group type",
+
+    /* SAI_OBJECT_TYPE_FDB = 30 */
+    "FDB type",
+
+    /* SAI_OBJECT_TYPE_SWITCH = 31 */
+    "Switch type",
+
+    /* SAI_OBJECT_TYPE_TRAP = 32 */
+    "Trap type",
+
+    /* SAI_OBJECT_TYPE_TRAP_USER_DEF = 33 */
+    "Trap user defined type",
+
+    /* SAI_OBJECT_TYPE_NEIGHBOR = 34 */
+    "Neighbour type",
+
+    /* SAI_OBJECT_TYPE_ROUTE = 35 */
+    "Route type",
+
+    /* SAI_OBJECT_TYPE_VLAN = 36 */
+    "VLAN type",
+
+    /* SAI_OBJECT_TYPE_TUNNEL_MAP = 37 */
+    "Tunnel map type",
+
+    /* SAI_OBJECT_TYPE_TUNNEL = 38 */
+    "Tunnel type",
+
+    /* SAI_OBJECT_TYPE_TUNNEL_TABLE_ENTRY = 39 */
+    "Tunnel table entry type",
+
+    /* SAI_OBJECT_TYPE_MAX = 40 */
 };
 
 typedef union {
